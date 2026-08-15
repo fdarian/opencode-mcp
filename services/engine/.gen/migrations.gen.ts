@@ -6,6 +6,7 @@ import m0001 from '../drizzle/0001_mute_inertia.sql' with { type: 'text' };
 import m0002 from '../drizzle/0002_unknown_tempest.sql' with { type: 'text' };
 import m0003 from '../drizzle/0003_thin_reptil.sql' with { type: 'text' };
 import m0004 from '../drizzle/0004_jazzy_gladiator.sql' with { type: 'text' };
+import m0005 from '../drizzle/0005_good_riptide.sql' with { type: 'text' };
 
 export default {
   journal: journal as { entries: { idx: number; when: number; tag: string; breakpoints: boolean }[] },
@@ -14,6 +15,7 @@ export default {
   '0001_mute_inertia': m0001,
   '0002_unknown_tempest': m0002,
   '0003_thin_reptil': m0003,
-  '0004_jazzy_gladiator': m0004
+  '0004_jazzy_gladiator': m0004,
+  '0005_good_riptide': m0005
   } as Record<string, string>,
 };

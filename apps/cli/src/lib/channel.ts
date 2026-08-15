@@ -2,7 +2,6 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
 	type AliasPreset,
-	BLOCKING_WAIT_TIMEOUT_MS,
 	cancelTool,
 	formatPresets,
 	resultTool,
@@ -21,7 +20,7 @@ const RESULT_TIMEOUT_DEFAULT_MS = 50_000;
  * Max wait for the result tool's single jobs.wait call. Cap is a deliberate poll-style
  * responsiveness choice — returns {status:"running"} so the caller can re-poll or do
  * other work. NOT a harness limit: Claude Code's MCP tool-call timeout defaults to
- * ~27.7h (see BLOCKING_WAIT_TIMEOUT_MS in services/engine/src/mcp/tools/start.ts).
+ * ~27.7h (see getStartTimeoutMs in services/engine/src/jobs.ts).
  */
 const RESULT_TIMEOUT_MAX_MS = 55_000;
 
@@ -219,9 +218,10 @@ function registerChannelTools(
 					return jsonContent({ status: 'running', jobId });
 				}
 
+				const startTimeout = await client.settings.getStartTimeout();
 				const result = await client.jobs.wait({
 					jobId,
-					timeoutMs: BLOCKING_WAIT_TIMEOUT_MS,
+					timeoutMs: startTimeout.minutes * 60_000,
 				});
 
 				if (result.status === 'running') {

@@ -1,7 +1,10 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from '@/lib/utils';
 
-const NAV = [{ label: 'Aliases', to: '/settings/aliases' as const }];
+const NAV = [
+	{ label: 'Aliases', to: '/settings/aliases' as const },
+	{ label: 'Timeout', to: '/settings/timeout' as const },
+];
 
 export function SettingsSidebar() {
 	return (

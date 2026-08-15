@@ -60,6 +60,8 @@ type JobsChange = {
 
 const TIMEOUT_DEFAULT_MS = 50_000;
 
+export const DEFAULT_START_TIMEOUT_MS = 30 * 60 * 1000;
+
 /** Sentinel event type emitted to SSE subscribers when a job reaches terminal status. */
 const TERMINAL_EVENT = '__terminal__';
 
@@ -759,6 +761,61 @@ export class Jobs extends Effect.Service<Jobs>()('oagent/Jobs', {
 			return true;
 		};
 
+		const getSetting = (key: string): string | undefined => {
+			const row = db
+				.select()
+				.from(schema.settings)
+				.where(eq(schema.settings.key, key))
+				.limit(1)
+				.get();
+			if (row === undefined) {
+				return undefined;
+			}
+			return row.value;
+		};
+
+		const setSetting = (key: string, value: string) => {
+			const now = new Date();
+			db.insert(schema.settings)
+				.values({
+					key,
+					value,
+					created_at: now,
+					updated_at: now,
+				})
+				.onConflictDoUpdate({
+					target: schema.settings.key,
+					set: {
+						value,
+						updated_at: now,
+					},
+				})
+				.run();
+		};
+
+		/**
+		 * Max time the start tool blocks waiting for a job before returning a running handle.
+		 *
+		 * Safe because Claude Code's MCP tool-call timeout defaults to ~27.7h (1e8 ms): from
+		 * the client binary, the per-call limit resolves as `.mcp.json` timeout → MCP_TOOL_TIMEOUT
+		 * env → 1e8 ms default, floored at 1s, ceiled at INT32_MAX (~24.8 days). The server can NOT
+		 * read that value — Claude Code injects no timeout into the MCP subprocess env (only
+		 * CLAUDE_PROJECT_DIR) — and progress notifications do NOT extend it (hard wall-clock). So we
+		 * pick our own conservative cap well under the default and hand back a {status:"running"}
+		 * resume handle if it elapses, rather than trying to detect the client's limit.
+		 */
+		const getStartTimeoutMs = (): number => {
+			const raw = getSetting('start_timeout_ms');
+			if (raw === undefined) {
+				return DEFAULT_START_TIMEOUT_MS;
+			}
+			const parsed = Number.parseInt(raw, 10);
+			if (Number.isNaN(parsed)) {
+				throw new Error(`Corrupt start_timeout_ms setting: ${raw}`);
+			}
+			return parsed;
+		};
+
 		return {
 			start,
 			cancel,
@@ -771,6 +828,9 @@ export class Jobs extends Effect.Service<Jobs>()('oagent/Jobs', {
 			listAliases,
 			saveAlias,
 			deleteAlias,
+			getSetting,
+			setSetting,
+			getStartTimeoutMs,
 			readEventsPage: (jobId: string, sinceId: number, limit: number) => {
 				const job = db
 					.select()

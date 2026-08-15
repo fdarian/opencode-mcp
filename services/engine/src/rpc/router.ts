@@ -176,6 +176,32 @@ const program = Effect.gen(function* () {
 				},
 			),
 		},
+		settings: {
+			getStartTimeout: yield* createHandler(
+				os.input(v.void_()).output(v.object({ minutes: v.number() })),
+				() => {
+					return Effect.succeed({
+						minutes: jobs.getStartTimeoutMs() / 60000,
+					});
+				},
+			),
+			setStartTimeout: yield* createHandler(
+				os
+					.input(
+						v.object({
+							minutes: v.pipe(v.number(), v.integer(), v.minValue(1)),
+						}),
+					)
+					.output(v.object({ minutes: v.number() })),
+				(opt) => {
+					jobs.setSetting(
+						'start_timeout_ms',
+						String(opt.input.minutes * 60000),
+					);
+					return Effect.succeed({ minutes: opt.input.minutes });
+				},
+			),
+		},
 		models: {
 			list: yield* createHandler(
 				os

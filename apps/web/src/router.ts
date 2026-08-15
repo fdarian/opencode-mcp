@@ -10,6 +10,7 @@ import { ConsoleIndexPage } from './pages/ConsoleIndexPage.tsx';
 import { ConsoleLayout } from './pages/ConsoleLayout.tsx';
 import { JobDetailPage } from './pages/JobDetailPage.tsx';
 import { SettingsLayout } from './pages/SettingsLayout.tsx';
+import { TimeoutSettingsPage } from './pages/TimeoutSettingsPage.tsx';
 
 const rootRoute = createRootRoute({ component: App });
 
@@ -51,9 +52,19 @@ const settingsAliasesRoute = createRoute({
 	component: AliasesPage,
 });
 
+const settingsTimeoutRoute = createRoute({
+	getParentRoute: () => settingsLayoutRoute,
+	path: 'timeout',
+	component: TimeoutSettingsPage,
+});
+
 const routeTree = rootRoute.addChildren([
 	consoleLayoutRoute.addChildren([consoleIndexRoute, jobDetailRoute]),
-	settingsLayoutRoute.addChildren([settingsIndexRoute, settingsAliasesRoute]),
+	settingsLayoutRoute.addChildren([
+		settingsIndexRoute,
+		settingsAliasesRoute,
+		settingsTimeoutRoute,
+	]),
 ]);
 
 export const router = createRouter({ routeTree });

@@ -183,3 +183,19 @@ export const modelAliases = sqliteTable(
 	},
 	(table) => [uniqueIndex('model_aliases_name_uq').on(table.name)],
 );
+
+export const settings = sqliteTable(
+	'settings',
+	{
+		id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),
+		key: text().notNull(),
+		value: text().notNull(),
+		created_at: integer({ mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		updated_at: integer({ mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(table) => [uniqueIndex('settings_key_uq').on(table.key)],
+);
