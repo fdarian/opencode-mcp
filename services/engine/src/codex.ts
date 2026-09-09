@@ -1,7 +1,5 @@
-import { BunContext } from '@effect/platform-bun';
 import { Effect } from 'effect';
-import { AcpAgent, AcpSessionError } from './acp-agent.ts';
-import { prepareCodexAcpHome } from './codex-config.ts';
+import { AcpAgent } from './acp-agent.ts';
 
 export class Codex extends Effect.Service<Codex>()('oagent/Codex', {
 	effect: Effect.gen(function* () {
@@ -15,11 +13,6 @@ export class Codex extends Effect.Service<Codex>()('oagent/Codex', {
 					binary,
 					args: [],
 					clientInfoName: 'oagent',
-					prepareEnv: () =>
-						prepareCodexAcpHome().pipe(
-							Effect.provide(BunContext.layer),
-							Effect.mapError((cause) => new AcpSessionError({ cause })),
-						),
 				}),
 			),
 		);
