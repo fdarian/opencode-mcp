@@ -9,3 +9,6 @@ allowBuilds:
   msgpackr-extract: true
 
 enableGlobalVirtualStore: true
+
+catalog:
+  typescript: ^7.0.2
