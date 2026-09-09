@@ -11,4 +11,4 @@ allowBuilds:
 enableGlobalVirtualStore: true
 
 catalog:
-  typescript: ^7.0.0-dev.20260525.1
+  typescript: ^7.0.2
