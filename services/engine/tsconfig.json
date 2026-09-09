@@ -1,7 +1,7 @@
 {
 	"extends": "@oagent/config/tsconfig-library.json",
 	"compilerOptions": {
-		"types": ["bun", "node"]
+		"types": ["bun"]
 	},
 	"include": ["src/**/*", ".gen/**/*"]
 }

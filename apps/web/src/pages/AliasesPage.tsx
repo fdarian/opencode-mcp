@@ -1,4 +1,4 @@
-import { useForm } from '@tanstack/react-form';
+import { useForm, useStore } from '@tanstack/react-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
@@ -173,13 +173,6 @@ type AliasFormProps = {
 	onCancel: () => void;
 };
 
-type AliasFormValues = {
-	name: string;
-	backend: Backend;
-	model_id: string;
-	description: string;
-};
-
 function AliasForm(props: AliasFormProps) {
 	const queryClient = useQueryClient();
 	// Server-side error to surface under the model_id field.
@@ -203,14 +196,13 @@ function AliasForm(props: AliasFormProps) {
 		},
 	});
 
-	const defaultValues: AliasFormValues = {
+	const form = useForm({
+		defaultValues: {
 			name: props.editingAlias?.name ?? '',
 			backend: props.editingAlias?.backend ?? 'opencode',
 			model_id: props.editingAlias?.model_id ?? '',
 			description: props.editingAlias?.description ?? '',
-	};
-	const form = useForm({
-		defaultValues,
+		},
 		onSubmit: ({ value }) => {
 			setServerModelError(undefined);
 			saveMutation.mutate({
@@ -224,6 +216,10 @@ function AliasForm(props: AliasFormProps) {
 			});
 		},
 	});
+	const backend = useStore(form.store, (state) => state.values.backend);
+	const canSubmit = useStore(form.store, (state) => state.canSubmit);
+	const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
+	const modelId = useStore(form.store, (state) => state.values.model_id);
 
 	return (
 		<form
@@ -322,19 +318,15 @@ function AliasForm(props: AliasFormProps) {
 					return (
 						<Field data-invalid={isInvalid}>
 							<FieldLabel htmlFor={field.name}>Model ID</FieldLabel>
-							<form.Subscribe selector={(state) => state.values.backend}>
-								{(backend: Backend) => (
-									<ModelCombobox
-										backend={backend}
-										value={field.state.value}
-										invalid={isInvalid}
-										onChange={(modelId) => {
-											field.handleChange(modelId);
-											setServerModelError(undefined);
-										}}
-									/>
-								)}
-							</form.Subscribe>
+							<ModelCombobox
+								backend={backend}
+								value={field.state.value}
+								invalid={isInvalid}
+								onChange={(modelId) => {
+									field.handleChange(modelId);
+									setServerModelError(undefined);
+								}}
+							/>
 							{isInvalid && <FieldError errors={errors} />}
 						</Field>
 					);
@@ -360,26 +352,17 @@ function AliasForm(props: AliasFormProps) {
 				<Button type="button" variant="outline" onClick={props.onCancel}>
 					Cancel
 				</Button>
-				<form.Subscribe
-					selector={(state) => ({
-						canSubmit: state.canSubmit,
-						isSubmitting: state.isSubmitting,
-					})}
+				<Button
+					type="submit"
+					disabled={
+						!canSubmit ||
+						isSubmitting ||
+						saveMutation.isPending ||
+						modelId.trim() === ''
+					}
 				>
-					{(state: { canSubmit: boolean; isSubmitting: boolean }) => (
-						<Button
-							type="submit"
-							disabled={
-								!state.canSubmit ||
-								state.isSubmitting ||
-								saveMutation.isPending ||
-								form.getFieldValue('model_id').trim() === ''
-							}
-						>
-							{saveMutation.isPending ? 'Saving…' : 'Save'}
-						</Button>
-					)}
-				</form.Subscribe>
+					{saveMutation.isPending ? 'Saving…' : 'Save'}
+				</Button>
 			</DialogFooter>
 		</form>
 	);
