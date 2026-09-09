@@ -14,8 +14,8 @@
 		"ci:release": "changeset publish"
 	},
 	"devDependencies": {
-		"@changesets/cli": "^2.29.7",
 		"@biomejs/biome": "^2.4.15",
+		"@changesets/cli": "^2.29.7",
 		"turbo": "^2.9.14"
 	}
 }

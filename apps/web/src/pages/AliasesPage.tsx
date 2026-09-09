@@ -1,4 +1,4 @@
-import { useForm } from '@tanstack/react-form';
+import { useForm, useStore } from '@tanstack/react-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
@@ -216,6 +216,10 @@ function AliasForm(props: AliasFormProps) {
 			});
 		},
 	});
+	const backend = useStore(form.store, (state) => state.values.backend);
+	const canSubmit = useStore(form.store, (state) => state.canSubmit);
+	const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
+	const modelId = useStore(form.store, (state) => state.values.model_id);
 
 	return (
 		<form
@@ -314,19 +318,15 @@ function AliasForm(props: AliasFormProps) {
 					return (
 						<Field data-invalid={isInvalid}>
 							<FieldLabel htmlFor={field.name}>Model ID</FieldLabel>
-							<form.Subscribe selector={(state) => state.values.backend}>
-								{(backend) => (
-									<ModelCombobox
-										backend={backend}
-										value={field.state.value}
-										invalid={isInvalid}
-										onChange={(modelId) => {
-											field.handleChange(modelId);
-											setServerModelError(undefined);
-										}}
-									/>
-								)}
-							</form.Subscribe>
+							<ModelCombobox
+								backend={backend}
+								value={field.state.value}
+								invalid={isInvalid}
+								onChange={(modelId) => {
+									field.handleChange(modelId);
+									setServerModelError(undefined);
+								}}
+							/>
 							{isInvalid && <FieldError errors={errors} />}
 						</Field>
 					);
@@ -352,26 +352,17 @@ function AliasForm(props: AliasFormProps) {
 				<Button type="button" variant="outline" onClick={props.onCancel}>
 					Cancel
 				</Button>
-				<form.Subscribe
-					selector={(state) => ({
-						canSubmit: state.canSubmit,
-						isSubmitting: state.isSubmitting,
-					})}
+				<Button
+					type="submit"
+					disabled={
+						!canSubmit ||
+						isSubmitting ||
+						saveMutation.isPending ||
+						modelId.trim() === ''
+					}
 				>
-					{({ canSubmit, isSubmitting }) => (
-						<Button
-							type="submit"
-							disabled={
-								!canSubmit ||
-								isSubmitting ||
-								saveMutation.isPending ||
-								form.getFieldValue('model_id').trim() === ''
-							}
-						>
-							{saveMutation.isPending ? 'Saving…' : 'Save'}
-						</Button>
-					)}
-				</form.Subscribe>
+					{saveMutation.isPending ? 'Saving…' : 'Save'}
+				</Button>
 			</DialogFooter>
 		</form>
 	);
