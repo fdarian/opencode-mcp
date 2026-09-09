@@ -54,9 +54,12 @@ export function createAcpConnection(config: {
 	binary: string;
 	args: readonly string[];
 	clientInfoName: string;
+	prepareEnv?: () => Effect.Effect<Record<string, string>, AcpSessionError>;
 	extensionHandlers?: Record<string, (params: unknown) => Promise<unknown>>;
 }) {
 	return Effect.gen(function* () {
+		const extraEnv =
+			config.prepareEnv === undefined ? undefined : yield* config.prepareEnv();
 		const subprocess = yield* Effect.acquireRelease(
 			Effect.sync(() => {
 				const transform = new TransformStream<Uint8Array, Uint8Array>();
@@ -65,6 +68,10 @@ export function createAcpConnection(config: {
 					stdout: 'pipe',
 					stderr: 'inherit',
 					cwd: process.cwd(),
+					env:
+						extraEnv === undefined
+							? process.env
+							: Object.assign({}, process.env, extraEnv),
 				});
 				return { transform, proc };
 			}),
@@ -353,6 +360,7 @@ export class AcpAgent extends Effect.Service<AcpAgent>()('oagent/AcpAgent', {
 		binary: string;
 		args: readonly string[];
 		clientInfoName: string;
+		prepareEnv?: () => Effect.Effect<Record<string, string>, AcpSessionError>;
 		extensionHandlers?: Record<string, (params: unknown) => Promise<unknown>>;
 	}) =>
 		Effect.gen(function* () {
