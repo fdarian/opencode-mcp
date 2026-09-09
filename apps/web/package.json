@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "bun scripts/dev.ts",
 		"build": "vite build",
-		"check:type": "tsgo --noEmit",
+		"check:type": "tsc --noEmit",
 		"dev:storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build"
 	},
@@ -59,7 +59,7 @@
 		"@types/bun": "^1.3.14",
 		"@types/react": "^19.2.15",
 		"@types/react-dom": "^19.2.3",
-		"@typescript/native-preview": "catalog:typescript",
+		"typescript": "catalog:typescript",
 		"@vitejs/plugin-react": "^6.0.2",
 		"agentation": "^3.0.2",
 		"storybook": "^10.4.1",
