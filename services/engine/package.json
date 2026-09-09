@@ -31,7 +31,7 @@
 	"devDependencies": {
 		"@oagent/config": "workspace:*",
 		"@types/bun": "^1.3.13",
-		"@typescript/native-preview": "^7.0.0-dev.20260525.1",
+		"@typescript/native-preview": "catalog:typescript",
 		"drizzle-kit": "^0.31.10"
 	}
 }
