@@ -30,7 +30,7 @@ function walk(dir: string, relPrefix: string, files: DistFile[]): void {
 }
 
 export async function prepareAssets(): Promise<void> {
-	const webBuild = Bun.spawnSync(['bun', 'run', 'build'], { cwd: '../web' });
+	const webBuild = Bun.spawnSync(['pnpm', 'run', 'build'], { cwd: '../web' });
 	if (webBuild.exitCode !== 0) {
 		fail('Web build failed:', webBuild.stderr.toString());
 	}
@@ -72,9 +72,10 @@ export default filemap;
 	fs.writeFileSync(path.join(genDir, 'web-ui.gen.ts'), genContent, 'utf-8');
 
 	const genMigrations = Bun.spawnSync([
-		'bun',
-		'--cwd',
+		'pnpm',
+		'--dir',
 		'../../services/engine',
+		'run',
 		'gen-migrations',
 	]);
 	if (genMigrations.exitCode !== 0) {

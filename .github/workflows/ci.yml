@@ -22,14 +22,12 @@ jobs:
         uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Fix unused imports
-        run: bunx biome lint --write --unsafe --only=correctness/noUnusedImports .
+        run: pnpm biome lint --write --unsafe --only=correctness/noUnusedImports .
       - name: Run formatter
-        run: bun run format
+        run: pnpm run format
       - name: Commit formatting changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
@@ -45,10 +43,8 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Cache turbo
         uses: actions/cache@v5
         with:
@@ -57,6 +53,6 @@ jobs:
           restore-keys: |
             turbo-${{ runner.os }}-
       - name: Check affected packages
-        run: bunx turbo run check --affected
+        run: pnpm turbo run check --affected
         env:
           TURBO_SCM_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}

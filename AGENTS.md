@@ -22,9 +22,9 @@ MCP server that exposes OpenCode to Claude Code as a subagent via ACP, with a Re
 Quick commands:
 
 ```sh
-bun dev    # parallel: engine + vite; engine picks port and DB session, web polls for engine URL
-bun check  # typecheck + biome across all packages
-bun run build  # produce standalone binary at apps/cli/dist/oagent
+pnpm dev       # parallel: engine + vite; engine picks port and DB session, web polls for engine URL
+pnpm check     # typecheck + biome across all packages
+pnpm run build # produce standalone binary at apps/cli/dist/oagent
 ```
 
 For details see:

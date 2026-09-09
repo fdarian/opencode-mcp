@@ -1,0 +1,17 @@
+name: Setup
+description: Set up pnpm, Node, and Bun, then install dependencies
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/setup@v2
+      with:
+        cache: true
+        install: false
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile

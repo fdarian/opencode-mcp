@@ -41,8 +41,8 @@ npx oagent
 ```sh
 git clone https://github.com/fdarian/oagent
 cd oagent
-bun install
-bun run build   # produces apps/cli/dist/oagent
+pnpm install
+pnpm run build   # produces apps/cli/dist/oagent
 ```
 
 Use `./apps/cli/dist/oagent` in place of `oagent` in the commands below.
@@ -189,9 +189,9 @@ If a process monitor shows oagent using gigabytes of memory, run `oagent doctor 
 ## Development
 
 ```sh
-bun dev          # parallel: engine + vite dev server
-bun check        # typecheck + biome lint across all packages
-bun run build    # produce standalone binary at apps/cli/dist/oagent
+pnpm dev         # parallel: engine + vite dev server
+pnpm check       # typecheck + biome lint across all packages
+pnpm run build   # produce standalone binary at apps/cli/dist/oagent
 ```
 
 Architecture: `AGENTS.md`.

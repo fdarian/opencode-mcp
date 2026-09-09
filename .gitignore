@@ -5,7 +5,6 @@ dist
 .DS_Store
 .env
 **.local*
-bun.lock.bak
 services/engine/.data/
 apps/cli/dist/
 apps/web/dist/

@@ -35,7 +35,7 @@ const main = defineDevCli({
 				yield* Effect.logInfo(`[dev] using default engine url: ${engineUrl}`);
 			}
 
-			yield* ctx.runManagedSubprocess('bunx', ['vite'], {
+			yield* ctx.runManagedSubprocess('pnpm', ['vite'], {
 				env: { ENGINE_URL: engineUrl },
 			});
 		}),

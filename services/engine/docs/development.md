@@ -2,15 +2,15 @@
 
 ## Running
 
-`bun dev` from repo root starts engine + web in parallel (see also the [web dev doc](../../../apps/web/docs/development.md)). To run the engine alone:
+`pnpm dev` from repo root starts engine + web in parallel (see also the [web dev doc](../../../apps/web/docs/development.md)). To run the engine alone:
 
 ```sh
-bun --filter '@oagent/engine' dev
+pnpm --filter '@oagent/engine' dev
 ```
 
 ## Sessions
 
-`bun dev` manages dev state under `services/engine/.data/sessions/<slug>/`. Each session contains:
+`pnpm dev` manages dev state under `services/engine/.data/sessions/<slug>/`. Each session contains:
 
 - `sqlite.db` — engine DB
 - `sess.json` — per-session persistent state (sticky port, etc.)
@@ -21,7 +21,7 @@ To force a fresh session: delete the latest slug dir, or delete all of `services
 
 ## Live URL discovery
 
-While `bun dev` is running, `services/engine/.data/running.json` contains the live engine URL:
+While `pnpm dev` is running, `services/engine/.data/running.json` contains the live engine URL:
 
 ```json
 { "url": "http://127.0.0.1:17777" }
