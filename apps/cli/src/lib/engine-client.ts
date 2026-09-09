@@ -18,7 +18,6 @@ function fetchNoTimeout(
 ): Promise<Response> {
 	return fetch(request, {
 		...init,
-		// @ts-expect-error — `timeout` is a Bun-specific RequestInit extension, not in DOM lib types
 		timeout: false,
 	});
 }

@@ -1,7 +1,7 @@
 {
 	"extends": "@oagent/config/tsconfig-server.json",
 	"compilerOptions": {
-		"types": ["bun"],
+		"types": ["bun", "node"],
 		"paths": {
 			"#/*": ["./src/*"]
 		}

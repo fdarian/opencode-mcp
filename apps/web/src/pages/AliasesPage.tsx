@@ -173,6 +173,13 @@ type AliasFormProps = {
 	onCancel: () => void;
 };
 
+type AliasFormValues = {
+	name: string;
+	backend: Backend;
+	model_id: string;
+	description: string;
+};
+
 function AliasForm(props: AliasFormProps) {
 	const queryClient = useQueryClient();
 	// Server-side error to surface under the model_id field.
@@ -196,13 +203,14 @@ function AliasForm(props: AliasFormProps) {
 		},
 	});
 
-	const form = useForm({
-		defaultValues: {
+	const defaultValues: AliasFormValues = {
 			name: props.editingAlias?.name ?? '',
 			backend: props.editingAlias?.backend ?? 'opencode',
 			model_id: props.editingAlias?.model_id ?? '',
 			description: props.editingAlias?.description ?? '',
-		},
+	};
+	const form = useForm({
+		defaultValues,
 		onSubmit: ({ value }) => {
 			setServerModelError(undefined);
 			saveMutation.mutate({
@@ -315,7 +323,7 @@ function AliasForm(props: AliasFormProps) {
 						<Field data-invalid={isInvalid}>
 							<FieldLabel htmlFor={field.name}>Model ID</FieldLabel>
 							<form.Subscribe selector={(state) => state.values.backend}>
-								{(backend) => (
+								{(backend: Backend) => (
 									<ModelCombobox
 										backend={backend}
 										value={field.state.value}
@@ -358,12 +366,12 @@ function AliasForm(props: AliasFormProps) {
 						isSubmitting: state.isSubmitting,
 					})}
 				>
-					{({ canSubmit, isSubmitting }) => (
+					{(state: { canSubmit: boolean; isSubmitting: boolean }) => (
 						<Button
 							type="submit"
 							disabled={
-								!canSubmit ||
-								isSubmitting ||
+								!state.canSubmit ||
+								state.isSubmitting ||
 								saveMutation.isPending ||
 								form.getFieldValue('model_id').trim() === ''
 							}
